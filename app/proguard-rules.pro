@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.pay2own.Pay2OwnDeviceAdminReceiver { *; }
+-keep class com.pay2own.GetProvisioningModeActivity { *; }
+-keep class com.pay2own.AdminPolicyComplianceActivity { *; }
