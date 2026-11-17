@@ -52,6 +52,13 @@ class PayViewModel @Inject constructor(
         refresh()
     }
 
+    fun retryPayment() {
+        _state.update {
+            it.copy(step = PayStep.Choose, result = null, error = null, reference = null, submitting = false)
+        }
+        refresh()
+    }
+
     fun refresh() {
         if (_state.value.step == PayStep.Waiting) return
         viewModelScope.launch {

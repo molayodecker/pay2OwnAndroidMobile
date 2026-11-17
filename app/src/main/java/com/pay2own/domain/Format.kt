@@ -1,6 +1,7 @@
 package com.pay2own.domain
 
 import java.util.Calendar
+import java.util.Locale
 
 fun maskPhone(phone: String): String {
     if (phone.length < 8) return "••••"
@@ -43,7 +44,9 @@ fun formatIsoDate(iso: String): String {
 }
 
 fun todayIso(calendar: Calendar = Calendar.getInstance()): String {
-    return "%04d-%02d-%02d".format(
+    return String.format(
+        Locale.ROOT,
+        "%04d-%02d-%02d",
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH) + 1,
         calendar.get(Calendar.DAY_OF_MONTH),

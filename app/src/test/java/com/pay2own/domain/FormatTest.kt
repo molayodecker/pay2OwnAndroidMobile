@@ -1,5 +1,7 @@
 package com.pay2own.domain
 
+import java.util.Calendar
+import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -43,5 +45,19 @@ class FormatTest {
         assertEquals("000000000000001", link?.imei)
         assertNull(parseEnrollLink("https://example.com"))
         assertNull(parseEnrollLink("pay2own://enroll?token=short&imei=000000000000001"))
+        assertNull(parseEnrollLink("pay2own://enroll?token=%ZZ&imei=000000000000001"))
+    }
+
+    @Test
+    fun todayKeepsAsciiDigits() {
+        val previous = Locale.getDefault()
+        Locale.setDefault(Locale.forLanguageTag("ar-EG"))
+        try {
+            val calendar = Calendar.getInstance()
+            calendar.set(2026, Calendar.NOVEMBER, 17)
+            assertEquals("2026-11-17", todayIso(calendar))
+        } finally {
+            Locale.setDefault(previous)
+        }
     }
 }

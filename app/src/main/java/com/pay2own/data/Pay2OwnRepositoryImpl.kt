@@ -9,6 +9,7 @@ import com.pay2own.domain.Loan
 import com.pay2own.domain.Outcome
 import com.pay2own.domain.Pay2OwnRepository
 import com.pay2own.domain.Payment
+import com.pay2own.domain.ReleaseWorkScheduler
 import com.pay2own.domain.StartedPayment
 import retrofit2.HttpException
 import java.io.IOException
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 class Pay2OwnRepositoryImpl @Inject constructor(
     private val api: Pay2OwnApi,
     private val store: LocalStore,
+    private val releaseWork: ReleaseWorkScheduler,
 ) : Pay2OwnRepository {
     override suspend fun hasCredentials(): Boolean = store.readCredentials() != null
 
@@ -34,6 +36,7 @@ class Pay2OwnRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearEnrollment() {
+        releaseWork.cancel()
         store.clear()
     }
 

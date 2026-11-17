@@ -12,8 +12,10 @@ fun parseEnrollLink(uri: String?): EnrollLink? {
         .split('&')
         .mapNotNull { pair ->
             val parts = pair.split('=', limit = 2)
-            if (parts.size != 2 || parts[0].isEmpty()) null
-            else decode(parts[0]) to decode(parts[1])
+            if (parts.size != 2 || parts[0].isEmpty()) return@mapNotNull null
+            val name = decode(parts[0]) ?: return@mapNotNull null
+            val value = decode(parts[1]) ?: return@mapNotNull null
+            name to value
         }
         .toMap()
     val token = params["token"].orEmpty().trim()
@@ -22,4 +24,8 @@ fun parseEnrollLink(uri: String?): EnrollLink? {
     return EnrollLink(token, imei)
 }
 
-private fun decode(value: String): String = URLDecoder.decode(value, Charsets.UTF_8.name())
+private fun decode(value: String): String? = try {
+    URLDecoder.decode(value, Charsets.UTF_8.name())
+} catch (_: IllegalArgumentException) {
+    null
+}

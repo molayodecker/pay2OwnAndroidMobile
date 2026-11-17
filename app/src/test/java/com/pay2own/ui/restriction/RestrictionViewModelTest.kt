@@ -92,6 +92,7 @@ private class FakeRestrictionRepository(
         return result
     }
     override suspend fun cached(): RestrictionState? = cachedState ?: states.value
+    override suspend fun enrolledImei(): String? = "000000000000001"
     override suspend fun confirmRelease(): ReleaseResult = ReleaseResult.Done
 }
 
@@ -106,7 +107,8 @@ private class RecordingPolicies : DeviceOwnerPolicies {
 
 private class RecordingScheduler : ReleaseWorkScheduler {
     var enqueued = 0
-    override fun enqueue() {
+    override suspend fun enqueue() {
         enqueued++
     }
+    override fun cancel() = Unit
 }

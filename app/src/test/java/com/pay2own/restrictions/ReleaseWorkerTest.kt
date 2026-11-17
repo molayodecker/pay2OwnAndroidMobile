@@ -31,9 +31,10 @@ class ReleaseWorkerTest {
         val store = MemoryStore()
         val api = ScriptedApi(204)
         val policies = RecordingPolicies()
-        val result = releaseOnce(RestrictionRepositoryImpl(api, store), policies)
+        val result = releaseOnce(RestrictionRepositoryImpl(api, store), policies, store.imei)
         assertEquals(androidx.work.ListenableWorker.Result.success(), result)
         assertTrue(policies.cleared)
+        assertEquals(false, policies.locked)
         assertEquals(1, api.releaseCalls)
         assertEquals(RestrictionState.Released.wire, store.value)
     }
@@ -42,9 +43,11 @@ class ReleaseWorkerTest {
     fun conflictDoesNotRetryOrMarkReleased() = runTest {
         val store = MemoryStore()
         val api = ScriptedApi(409)
-        val result = releaseOnce(RestrictionRepositoryImpl(api, store), RecordingPolicies())
+        val policies = RecordingPolicies()
+        val result = releaseOnce(RestrictionRepositoryImpl(api, store), policies, store.imei)
         assertEquals(androidx.work.ListenableWorker.Result.success(), result)
         assertEquals(1, api.releaseCalls)
+        assertTrue(policies.locked)
         assertEquals(RestrictionState.ReleasePending.wire, store.value)
     }
 
@@ -52,8 +55,10 @@ class ReleaseWorkerTest {
     fun serverErrorRetriesLater() = runTest {
         val store = MemoryStore()
         val api = ScriptedApi(500)
-        val result = releaseOnce(RestrictionRepositoryImpl(api, store), RecordingPolicies())
+        val policies = RecordingPolicies()
+        val result = releaseOnce(RestrictionRepositoryImpl(api, store), policies, store.imei)
         assertEquals(androidx.work.ListenableWorker.Result.retry(), result)
+        assertTrue(policies.locked)
         assertEquals(1, api.releaseCalls)
         assertEquals(RestrictionState.ReleasePending.wire, store.value)
     }
@@ -63,15 +68,39 @@ class ReleaseWorkerTest {
         val store = MemoryStore()
         val api = ScriptedApi(204)
         val policies = RecordingPolicies(clear = false)
-        val result = releaseOnce(RestrictionRepositoryImpl(api, store), policies)
+        val result = releaseOnce(RestrictionRepositoryImpl(api, store), policies, store.imei)
         assertEquals(androidx.work.ListenableWorker.Result.retry(), result)
+        assertEquals(0, api.releaseCalls)
+        assertEquals(RestrictionState.ReleasePending.wire, store.value)
+    }
+
+    @Test
+    fun aDifferentEnrollmentIsLeftLocked() = runTest {
+        val store = MemoryStore()
+        val api = ScriptedApi(204)
+        val policies = RecordingPolicies()
+        val result = releaseOnce(RestrictionRepositoryImpl(api, store), policies, "000000000000002")
+        assertEquals(androidx.work.ListenableWorker.Result.success(), result)
+        assertEquals(false, policies.cleared)
+        assertEquals(0, api.releaseCalls)
+    }
+
+    @Test
+    fun enrollmentChangedAfterClearIsRelocked() = runTest {
+        val store = MemoryStore()
+        val api = ScriptedApi(204)
+        val policies = RecordingPolicies(onClear = { store.imei = "000000000000002" })
+        val result = releaseOnce(RestrictionRepositoryImpl(api, store), policies, "000000000000001")
+        assertEquals(androidx.work.ListenableWorker.Result.success(), result)
+        assertTrue(policies.locked)
         assertEquals(0, api.releaseCalls)
         assertEquals(RestrictionState.ReleasePending.wire, store.value)
     }
 }
 
 private class MemoryStore(var value: String? = RestrictionState.ReleasePending.wire) : RestrictionStore {
-    override suspend fun imei() = "000000000000001"
+    var imei = "000000000000001"
+    override suspend fun imei() = imei
     override suspend fun readRestriction() = value
     override suspend fun writeRestriction(state: String) {
         value = state
@@ -79,13 +108,20 @@ private class MemoryStore(var value: String? = RestrictionState.ReleasePending.w
     override fun restrictionFlow(): Flow<String?> = flowOf(value)
 }
 
-private class RecordingPolicies(private val clear: Boolean = true) : DeviceOwnerPolicies {
+private class RecordingPolicies(
+    private val clear: Boolean = true,
+    private val onClear: () -> Unit = {},
+) : DeviceOwnerPolicies {
     var cleared = false
+    var locked = false
     override fun clear() {
         cleared = true
+        onClear()
     }
     override fun areClear() = clear
-    override fun applyLock() = Unit
+    override fun applyLock() {
+        locked = true
+    }
 }
 
 private class ScriptedApi(private val code: Int) : Pay2OwnApi {

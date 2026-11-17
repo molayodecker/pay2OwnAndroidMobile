@@ -65,6 +65,7 @@ fun PayRoute(
         onContinue = viewModel::continueToConfirm,
         onBackToChoose = viewModel::backToChoose,
         onPay = viewModel::pay,
+        onRetryPayment = viewModel::retryPayment,
         onDone = onDone,
         onReceipt = onReceipt,
         paidOff = restriction.copy,
@@ -80,6 +81,7 @@ fun PayScreen(
     onContinue: () -> Unit,
     onBackToChoose: () -> Unit,
     onPay: () -> Unit,
+    onRetryPayment: () -> Unit = onRetry,
     onDone: () -> Unit,
     onReceipt: (String) -> Unit,
     paidOff: PaidOffCopy = PaidOffCopy.PaidOff,
@@ -93,10 +95,10 @@ fun PayScreen(
                 padding, errorTitle(state.error), errorBody(state.error), stringResource(R.string.retry), onRetry,
             )
             loan == null -> LoadingState(padding)
-            state.step == PayStep.Done -> PayDone(padding, state, onDone, onReceipt, onRetry)
+            state.step == PayStep.Done -> PayDone(padding, state, onDone, onReceipt, onRetryPayment)
             state.step == PayStep.Waiting -> PayWaiting(padding, state)
-            state.step == PayStep.Confirm -> PayConfirm(padding, loan, state, onPay)
-            else -> PayChoose(padding, loan, state, paidOff, onSelectCount, onSelectBalance, onContinue)
+            state.step == PayStep.Confirm -> PayConfirm(padding, loan, state, onPay, onRetry)
+            else -> PayChoose(padding, loan, state, paidOff, onSelectCount, onSelectBalance, onContinue, onRetry)
         }
     }
 }
@@ -110,6 +112,7 @@ private fun PayChoose(
     onSelectCount: (Int) -> Unit,
     onSelectBalance: () -> Unit,
     onContinue: () -> Unit,
+    onRetry: () -> Unit,
 ) {
     val unpaid = unpaidInstallments(loan)
     ScrollColumn(padding) {
@@ -154,6 +157,7 @@ private fun PayChoose(
             )
         }
         if (state.error != null) Text(errorBody(state.error), color = MaterialTheme.colorScheme.error)
+        if (state.offline) SecondaryButton(stringResource(R.string.retry), onRetry)
         PrimaryButton(stringResource(R.string.continue_action), onContinue, enabled = !state.offline)
     }
 }
@@ -185,6 +189,7 @@ private fun PayConfirm(
     loan: Loan,
     state: PayUiState,
     onPay: () -> Unit,
+    onRetry: () -> Unit,
 ) {
     val amount = selectedAmount(loan, state.installmentCount, state.payBalance)
     ScrollColumn(padding) {
@@ -201,6 +206,7 @@ private fun PayConfirm(
         LabeledValue(stringResource(R.string.setup_momo), displayPhone(loan.phoneMasked))
         LabeledValue(stringResource(R.string.pay_momo_provider), providerName(loan.provider))
         if (state.error != null) Text(errorBody(state.error), color = MaterialTheme.colorScheme.error)
+        if (state.offline) SecondaryButton(stringResource(R.string.retry), onRetry)
         PrimaryButton(
             label = stringResource(R.string.pay_submit, formatMoney(loan.currency, amount)),
             onClick = onPay,

@@ -14,6 +14,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -97,6 +99,27 @@ class PayViewModelTest {
         vm.pay()
         advanceUntilIdle()
         assertEquals(PayResult.Failure, vm.state.value.result)
+        vm.retryPayment()
+        advanceUntilIdle()
+        assertEquals(PayStep.Choose, vm.state.value.step)
+        assertNull(vm.state.value.result)
+    }
+
+    @Test
+    fun offlinePaymentCanBeRetriedFromConfirm() = runTest(main.dispatcher) {
+        val repo = FakeRepository()
+        repo.startOutcome = Outcome.Offline
+        val vm = PayViewModel(repo, ImmediateSleeper())
+        runCurrent()
+        vm.continueToConfirm()
+        vm.pay()
+        advanceUntilIdle()
+        assertEquals(PayStep.Confirm, vm.state.value.step)
+        assertTrue(vm.state.value.offline)
+        vm.refresh()
+        advanceUntilIdle()
+        assertEquals(PayStep.Confirm, vm.state.value.step)
+        assertFalse(vm.state.value.offline)
     }
 }
 

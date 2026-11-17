@@ -56,6 +56,8 @@ class RestrictionRepositoryImpl @Inject constructor(
 
     override suspend fun cached(): RestrictionState? = store.readRestriction()?.let(RestrictionState::parse)
 
+    override suspend fun enrolledImei(): String? = store.imei()
+
     override suspend fun confirmRelease(): ReleaseResult {
         val imei = store.imei() ?: return ReleaseResult.Retry
         return try {

@@ -53,6 +53,7 @@ interface RestrictionRepository {
     fun observe(): Flow<RestrictionState?>
     suspend fun refresh(): Outcome<RestrictionState>
     suspend fun cached(): RestrictionState?
+    suspend fun enrolledImei(): String?
     suspend fun confirmRelease(): ReleaseResult
 }
 
@@ -66,5 +67,6 @@ interface DeviceOwnerPolicies {
 }
 
 interface ReleaseWorkScheduler {
-    fun enqueue()
+    suspend fun enqueue()
+    fun cancel()
 }
