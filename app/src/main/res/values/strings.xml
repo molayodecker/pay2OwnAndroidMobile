@@ -1,3 +1,163 @@
 <resources>
     <string name="app_name">Pay2Own</string>
+    <string name="back">Back</string>
+    <string name="loading">Loading</string>
+    <string name="retry">Try again</string>
+    <string name="continue_action">Continue</string>
+
+    <string name="status_up_to_date">Up to date</string>
+    <string name="status_due_soon">Due soon</string>
+    <string name="status_overdue">Overdue</string>
+    <string name="status_paid_off">Paid off</string>
+
+    <string name="offline_banner">No connection. Showing the last update saved on this phone.</string>
+    <string name="error_offline_title">No connection</string>
+    <string name="error_offline_body">Check your signal and try again.</string>
+    <string name="error_not_found_title">Nothing to show</string>
+    <string name="error_not_found_body">Pay2Own could not find a loan for this phone.</string>
+    <string name="error_conflict_title">A payment is already waiting</string>
+    <string name="error_conflict_body">Approve it on your phone, or wait a few minutes and try again.</string>
+    <string name="error_busy_title">Payment service is busy</string>
+    <string name="error_busy_body">Please try again in a moment.</string>
+    <string name="error_amount_title">That amount is not available</string>
+    <string name="error_amount_body">Choose the installment that is due, a few installments, or the full balance.</string>
+    <string name="error_failed_title">Something went wrong</string>
+    <string name="error_failed_body">Please try again. If it keeps happening, contact Pay2Own.</string>
+
+    <string name="setup_title">Set up this phone</string>
+    <string name="setup_body">Scan the shop code, or type the IMEI and device token. They are stored on this phone and are not part of the app.</string>
+    <string name="setup_scan">Scan the shop code</string>
+    <string name="setup_scan_body">Point the camera at the loan code on the shop screen.</string>
+    <string name="setup_scan_wrong">That code is not a Pay2Own loan code.</string>
+    <string name="setup_scan_permission">Pay2Own needs the camera to read the shop code.</string>
+    <string name="setup_scan_allow">Allow the camera</string>
+    <string name="setup_scan_close">Type it instead</string>
+    <string name="setup_imei">IMEI</string>
+    <string name="setup_token">Device token</string>
+    <string name="setup_show_token">Show token</string>
+    <string name="setup_hide_token">Hide token</string>
+    <string name="setup_imei_error">Enter the 15-digit IMEI.</string>
+    <string name="setup_token_error">Enter the device token from the shop.</string>
+    <string name="setup_check">Check this phone</string>
+    <string name="setup_checking">Checking this phone</string>
+    <string name="setup_confirm_title">Is this you?</string>
+    <string name="setup_confirm_body">Confirm your name and MoMo number before using Pay2Own.</string>
+    <string name="setup_name">Name</string>
+    <string name="setup_momo">MoMo number</string>
+    <string name="pay_momo_provider">MoMo service</string>
+    <string name="setup_yes">Yes, this is me</string>
+    <string name="setup_no">This is not me</string>
+
+    <string name="contact_title">Contact Pay2Own</string>
+    <string name="contact_body">This phone is not signed in. The device token was rejected. Ask the shop for a new one, or contact Pay2Own.</string>
+    <string name="contact_new_token">Enter a new token</string>
+
+    <string name="home_hello">Hello, %1$s</string>
+    <string name="home_next_amount">Next payment</string>
+    <string name="home_due">Due %1$s</string>
+    <string name="home_installment">Installment %1$d of %2$d</string>
+    <string name="home_remaining">Remaining balance</string>
+    <string name="home_progress">Paid %1$s of %2$s</string>
+    <string name="home_progress_description">%1$d percent of the phone price is paid</string>
+    <string name="home_paid_off">This phone is paid off.</string>
+    <string name="home_finishing_unlock">Paid off. Finishing unlock…</string>
+    <string name="home_fully_yours">This phone is fully yours. All Pay2Own restrictions have been removed.</string>
+    <string name="home_restrictions_on">This phone is paid off. Pay2Own restrictions are still on.</string>
+    <string name="home_yours">This phone is fully yours.</string>
+    <string name="home_locks_removed">The locks have been removed.</string>
+    <string name="home_waiting">A payment is waiting for your approval.</string>
+    <string name="pay_now">Pay now</string>
+    <string name="nav_history">Payment history</string>
+    <string name="nav_schedule">Loan details</string>
+    <string name="nav_support">Support</string>
+    <string name="tab_payments">Payments</string>
+    <string name="tab_loan">Loan</string>
+    <string name="tab_support">Support</string>
+
+    <string name="pay_title">Pay now</string>
+    <string name="pay_this">This installment</string>
+    <string name="pay_several">Several installments</string>
+    <string name="pay_balance">Full balance</string>
+    <string name="pay_count">%1$d installments</string>
+    <string name="pay_decrease">Fewer installments</string>
+    <string name="pay_increase">More installments</string>
+    <string name="pay_confirm_title">Confirm payment</string>
+    <string name="pay_confirm_amount">Amount</string>
+    <string name="pay_approve">Approve on your phone</string>
+    <string name="pay_approve_body">A MoMo prompt is on its way. Approve it with your PIN. This screen will update when Pay2Own receives it.</string>
+    <string name="pay_waiting">Waiting for approval</string>
+    <string name="pay_submit">Pay %1$s</string>
+    <string name="pay_success">Payment received</string>
+    <string name="pay_failure">Payment failed</string>
+    <string name="pay_timeout">Still waiting</string>
+    <string name="pay_timeout_body">We have not had confirmation yet. Check your payment history in a few minutes before paying again.</string>
+    <string name="pay_failure_body">The payment was not approved. You can try again.</string>
+    <string name="pay_success_body">%1$s is recorded. Reference %2$s.</string>
+    <string name="pay_view_receipt">View receipt</string>
+    <string name="pay_done">Done</string>
+    <string name="provider_mtn">MTN MoMo</string>
+    <string name="provider_vod">Telecel Cash</string>
+    <string name="provider_atl">AT Money</string>
+    <string name="provider_other">MoMo</string>
+
+    <string name="history_title">Payment history</string>
+    <string name="history_empty_title">No payments yet</string>
+    <string name="history_empty_body">Payments you make will show here with the date, amount, reference and status.</string>
+    <string name="payment_success">Received</string>
+    <string name="payment_failed">Failed</string>
+    <string name="payment_pending">Waiting</string>
+    <string name="history_installments">Installments %1$s</string>
+
+    <string name="receipt_title">Receipt</string>
+    <string name="receipt_share">Share receipt</string>
+    <string name="receipt_share_body">Pay2Own receipt\n%1$s\n%2$s\nReference %3$s\n%4$s</string>
+    <string name="receipt_date">Date</string>
+    <string name="receipt_reference">Reference</string>
+    <string name="receipt_status">Status</string>
+
+    <string name="schedule_title">Loan details</string>
+    <string name="schedule_phone">Phone</string>
+    <string name="schedule_price">Price</string>
+    <string name="schedule_deposit">Deposit</string>
+    <string name="schedule_started">Started</string>
+    <string name="schedule_heading">Schedule</string>
+    <string name="schedule_paid">Paid</string>
+    <string name="schedule_due_today">Due today</string>
+    <string name="schedule_overdue">Overdue</string>
+    <string name="schedule_unpaid">Due</string>
+    <string name="schedule_row">Installment %1$d, %2$s, %3$s, %4$s</string>
+    <string name="terms_heading">Terms you agreed to</string>
+
+    <string name="support_title">Support</string>
+    <string name="support_body">Call or WhatsApp Pay2Own, or read the answers below.</string>
+    <string name="call_support">Call Pay2Own</string>
+    <string name="whatsapp_support">WhatsApp Pay2Own</string>
+    <string name="support_not_configured">Ask at the shop and they will contact Pay2Own for you.</string>
+    <string name="support_phone" translatable="false"></string>
+    <string name="support_whatsapp" translatable="false"></string>
+    <string name="faq">Common questions</string>
+    <string name="not_my_phone">This is not my phone</string>
+
+    <string name="faq_title">Common questions</string>
+    <string name="faq_pay_q">How do I pay?</string>
+    <string name="faq_pay_a">Open Pay2Own, tap Pay now, and choose the installment that is due, several installments, or the full balance. Check the amount and your MoMo number, then approve the prompt on your phone with your MoMo PIN.</string>
+    <string name="faq_miss_q">What happens if I miss a payment?</string>
+    <string name="faq_miss_a">The installment stays due and Pay2Own keeps reminding you. Pay it as soon as you can. If this phone is enrolled for restrictions, it can be limited after a grace period. Emergency calls stay available.</string>
+    <string name="faq_help_q">How do I get help?</string>
+    <string name="faq_help_a">Use Call or WhatsApp on the support screen, or go back to the shop where you collected the phone.</string>
+
+    <string name="notifications_channel">Pay2Own payments</string>
+    <string name="notifications_channel_description">Payment reminders and confirmations</string>
+
+    <string name="debug_heading">Test controls</string>
+    <string name="debug_body">These controls are only in debug builds. Financing restrictions turn on when this app is device owner and the server says the phone is still restricted.</string>
+    <string name="debug_admin_on">Device admin: active</string>
+    <string name="debug_admin_off">Device admin: inactive</string>
+    <string name="debug_owner_on">Device owner: yes</string>
+    <string name="debug_owner_off">Device owner: no</string>
+    <string name="debug_refresh">Refresh status</string>
+    <string name="debug_lock">Test screen lock</string>
+    <string name="debug_admin_setup">Open administrator setup</string>
+    <string name="debug_lock_missing">Screen-lock permission is missing. Reactivate Pay2Own administration.</string>
+    <string name="debug_admin_explanation">Activate Pay2Own administration for this test phone. Financing restrictions apply only after this app is device owner.</string>
 </resources>
