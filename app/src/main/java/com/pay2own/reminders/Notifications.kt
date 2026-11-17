@@ -45,7 +45,7 @@ object NotificationHelper {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_launcher_monochrome)
             .setContentTitle(title ?: context.getString(R.string.app_name))
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
