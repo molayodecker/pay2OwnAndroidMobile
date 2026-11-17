@@ -1,0 +1,124 @@
+{
+  "project_info": {
+    "project_number": "517385153432",
+    "project_id": "instaclean-2a8aa",
+    "storage_bucket": "instaclean-2a8aa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517385153432:android:5f3249c47848e5938659ed",
+        "android_client_info": {
+          "package_name": "com.pay2own"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDahnz3hGgas4gjOGCS0EHe0ojy_uXBy_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517385153432:android:1662cb0b245531b78659ed",
+        "android_client_info": {
+          "package_name": "com.tryinstaclean"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDahnz3hGgas4gjOGCS0EHe0ojy_uXBy_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517385153432:android:916e9a34daa9fde28659ed",
+        "android_client_info": {
+          "package_name": "com.tryinstaclean.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDahnz3hGgas4gjOGCS0EHe0ojy_uXBy_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517385153432:android:a6d9f9532327e6de8659ed",
+        "android_client_info": {
+          "package_name": "com.tryinstaclean.preview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDahnz3hGgas4gjOGCS0EHe0ojy_uXBy_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517385153432:android:f30e356df9ba0f148659ed",
+        "android_client_info": {
+          "package_name": "com.tryinstaclean.pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDahnz3hGgas4gjOGCS0EHe0ojy_uXBy_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517385153432:android:296924117c43e77e8659ed",
+        "android_client_info": {
+          "package_name": "com.tryinstaclean.pro.preview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDahnz3hGgas4gjOGCS0EHe0ojy_uXBy_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
