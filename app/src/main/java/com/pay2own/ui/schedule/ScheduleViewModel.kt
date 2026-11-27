@@ -30,10 +30,6 @@ class ScheduleViewModel @Inject constructor(
     private val _state = MutableStateFlow(ScheduleUiState())
     val state: StateFlow<ScheduleUiState> = _state.asStateFlow()
 
-    init {
-        refresh()
-    }
-
     fun refresh() {
         viewModelScope.launch {
             _state.update { it.copy(loading = it.loan == null) }

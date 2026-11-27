@@ -33,6 +33,11 @@ class FormatTest {
     fun moneyAndDates() {
         assertEquals("GHS 300.00", formatMoney("GHS", 30000))
         assertEquals("20 Nov 2026", formatIsoDate("2026-11-20"))
+        assertEquals("Fri 20 Nov 2026", formatWeekday("2026-11-20"))
+        assertEquals("Ramata", firstName("Ramata Abdulai"))
+        assertEquals("RA", initials("Ramata Abdulai"))
+        assertEquals("055 ••• 4987", spacedPhone("055•••4987"))
+        assertEquals("p2o_fb2936…38d8ca", shortReference("p2o_fb2936xxxx38d8ca"))
         assertEquals("overdue", dueLabel("unpaid", "2026-11-13", "2026-11-14"))
         assertEquals("paid", dueLabel("paid", "2026-11-13", "2026-11-14"))
     }

@@ -30,10 +30,6 @@ class HistoryViewModel @Inject constructor(
     private val _state = MutableStateFlow(HistoryUiState())
     val state: StateFlow<HistoryUiState> = _state.asStateFlow()
 
-    init {
-        refresh()
-    }
-
     fun refresh() {
         viewModelScope.launch {
             _state.update { it.copy(loading = it.payments.isEmpty()) }

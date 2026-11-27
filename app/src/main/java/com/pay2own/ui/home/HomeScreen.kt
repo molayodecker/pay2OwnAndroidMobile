@@ -1,26 +1,42 @@
 package com.pay2own.ui.home
 
 import android.Manifest
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -37,20 +53,29 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.pay2own.R
 import com.pay2own.domain.Loan
 import com.pay2own.domain.PaidOffCopy
+import com.pay2own.domain.RestrictionState
 import com.pay2own.domain.canPay
-import com.pay2own.domain.formatIsoDate
+import com.pay2own.domain.firstName
 import com.pay2own.domain.formatMoney
+import com.pay2own.domain.formatWeekday
+import com.pay2own.domain.initials
 import com.pay2own.reminders.firebaseReady
-import com.pay2own.ui.components.HeroAmount
+import com.pay2own.ui.components.AppBottomBar
+import com.pay2own.ui.components.AppTab
 import com.pay2own.ui.components.LoadingState
 import com.pay2own.ui.components.MessageState
 import com.pay2own.ui.components.OfflineBanner
-import com.pay2own.ui.components.PaidOffMessage
 import com.pay2own.ui.components.PaidProgress
 import com.pay2own.ui.components.Pay2OwnScaffold
 import com.pay2own.ui.components.PrimaryButton
 import com.pay2own.ui.components.ScrollColumn
+import com.pay2own.ui.components.SecondaryButton
 import com.pay2own.ui.components.StatusBadge
+import com.pay2own.ui.theme.Cyan
+import com.pay2own.ui.theme.Ice
+import com.pay2own.ui.theme.Mist
+import com.pay2own.ui.theme.Navy
+import com.pay2own.ui.theme.White
 import com.pay2own.ui.components.errorBody
 import com.pay2own.ui.components.errorTitle
 import com.pay2own.ui.restriction.RestrictionViewModel
@@ -93,13 +118,23 @@ fun HomeRoute(
         task.addOnSuccessListener(listener)
         onDispose { }
     }
-    HomeScreen(state, restriction.copy, viewModel::refresh, onPay, onHistory, onSchedule, onSupport)
+    HomeScreen(
+        state,
+        restriction.copy,
+        locked = restriction.state == RestrictionState.Active,
+        onRetry = viewModel::refresh,
+        onPay = onPay,
+        onHistory = onHistory,
+        onSchedule = onSchedule,
+        onSupport = onSupport,
+    )
 }
 
 @Composable
 fun HomeScreen(
     state: HomeUiState,
     paidOff: PaidOffCopy = PaidOffCopy.PaidOff,
+    locked: Boolean = false,
     onRetry: () -> Unit,
     onPay: () -> Unit,
     onHistory: () -> Unit,
@@ -107,9 +142,12 @@ fun HomeScreen(
     onSupport: () -> Unit,
 ) {
     Pay2OwnScaffold(
-        title = stringResource(R.string.app_name),
+        title = "",
+        showTopBar = false,
         bottomBar = {
-            if (state.loan != null) HomeTabs(onHistory, onSchedule, onSupport)
+            if (state.loan != null) {
+                AppBottomBar(AppTab.Home, onHome = {}, onPayments = onHistory, onLoan = onSchedule, onSupport = onSupport)
+            }
         },
     ) { padding ->
         val loan = state.loan
@@ -118,7 +156,7 @@ fun HomeScreen(
             loan == null && state.error != null -> MessageState(
                 padding, errorTitle(state.error), errorBody(state.error), stringResource(R.string.retry), onRetry,
             )
-            loan != null -> HomeContent(padding, loan, state.offline, paidOff, onPay)
+            loan != null -> HomeContent(padding, loan, state.offline, paidOff, locked, onPay, onHistory)
             else -> LoadingState(padding)
         }
     }
@@ -130,67 +168,131 @@ private fun HomeContent(
     loan: Loan,
     offline: Boolean,
     paidOff: PaidOffCopy,
+    locked: Boolean,
     onPay: () -> Unit,
+    onHistory: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val paidOffScreen = loan.accountStatus == "paid_off"
     ScrollColumn(padding) {
         if (offline) OfflineBanner()
+        BrandRow(initials(loan.customerName))
         Text(
-            stringResource(R.string.home_hello, loan.customerName),
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            stringResource(R.string.home_hello, firstName(loan.customerName)),
+            style = MaterialTheme.typography.headlineMedium,
         )
-        StatusBadge(loan.accountStatus, Modifier.align(Alignment.CenterHorizontally))
-        if (loan.accountStatus == "paid_off") {
-            PaidOffMessage(paidOff)
+        BalanceCard(loan)
+        if (paidOffScreen) {
+            PaidOffCard(paidOff, onHistory)
         } else {
-            val next = loan.next
-            if (next != null) {
-                Text(
-                    stringResource(R.string.home_next_amount),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                HeroAmount(formatMoney(loan.currency, next.amountMinor))
-                Text(
-                    stringResource(R.string.home_due, formatIsoDate(next.dueDate)),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Text(
-                    stringResource(R.string.home_installment, next.sequence, loan.installmentCount),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            NextPaymentCard(loan, offline, onPay)
+        }
+        if (loan.pendingReference != null) {
+            Text(stringResource(R.string.home_waiting), modifier = Modifier.fillMaxWidth())
+        }
+        if (locked) {
+            Text(stringResource(R.string.lock_apps_paused), modifier = Modifier.fillMaxWidth())
+            SecondaryButton(stringResource(R.string.lock_phone)) {
+                try {
+                    context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:")))
+                } catch (_: ActivityNotFoundException) {
+                }
             }
         }
-        Text(
-            stringResource(R.string.home_remaining),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
-        )
+    }
+}
+
+@Composable
+private fun BrandRow(letters: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Image(
+                painter = painterResource(R.mipmap.ic_launcher_foreground),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(36.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(colorResource(R.color.ic_launcher_background)),
+            )
+            Text(
+                buildAnnotatedString {
+                    withStyle(SpanStyle(color = Navy, fontWeight = FontWeight.Bold)) { append("Pay") }
+                    withStyle(SpanStyle(color = Cyan, fontWeight = FontWeight.Bold)) { append("2") }
+                    withStyle(SpanStyle(color = Navy, fontWeight = FontWeight.Bold)) { append("own") }
+                },
+                fontSize = 22.sp,
+            )
+        }
+        Box(
+            modifier = Modifier.size(40.dp).clip(CircleShape).background(Ice),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(letters, color = Navy, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@Composable
+private fun BalanceCard(loan: Loan) {
+    val percent = (loan.progress * 100).toInt()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(Navy)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Icon(Icons.Filled.Smartphone, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(16.dp))
+                Text(loan.model, color = Color.White)
+            }
+            StatusBadge(loan.accountStatus, onDark = true)
+        }
+        Text(stringResource(R.string.home_remaining), color = Color.White.copy(alpha = 0.75f))
         Text(
             formatMoney(loan.currency, loan.remainingMinor),
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 36.sp,
         )
-        val percent = (loan.progress * 100).toInt()
-        PaidProgress(
-            fraction = loan.progress,
-            description = stringResource(R.string.home_progress_description, percent),
-        )
+        PaidProgress(loan.progress, stringResource(R.string.home_progress_description, percent))
         Text(
-            stringResource(R.string.home_progress, formatMoney(loan.currency, loan.paidMinor), formatMoney(loan.currency, loan.priceMinor)),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
+            stringResource(
+                R.string.home_progress,
+                formatMoney(loan.currency, loan.paidMinor),
+                formatMoney(loan.currency, loan.priceMinor),
+            ),
+            color = Color.White.copy(alpha = 0.85f),
         )
-        if (loan.pendingReference != null) {
-            Text(stringResource(R.string.home_waiting), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+    }
+}
+
+@Composable
+private fun NextPaymentCard(loan: Loan, offline: Boolean, onPay: () -> Unit) {
+    val next = loan.next ?: return
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(Mist)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Column {
+                Text(stringResource(R.string.home_next_amount), color = Navy.copy(alpha = 0.7f))
+                Text(formatMoney(loan.currency, next.amountMinor), style = MaterialTheme.typography.headlineMedium)
+            }
+            Column(horizontalAlignment = Alignment.End) {
+                Text(stringResource(R.string.home_due_label), color = Navy.copy(alpha = 0.7f))
+                Text(formatWeekday(next.dueDate), fontWeight = FontWeight.SemiBold, textAlign = androidx.compose.ui.text.style.TextAlign.End)
+            }
         }
         PrimaryButton(
             label = stringResource(R.string.pay_now),
@@ -202,28 +304,30 @@ private fun HomeContent(
 }
 
 @Composable
-private fun HomeTabs(onHistory: () -> Unit, onSchedule: () -> Unit, onSupport: () -> Unit) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-            .navigationBarsPadding(),
-    ) {
-        HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            HomeTab(stringResource(R.string.tab_payments), stringResource(R.string.nav_history), onHistory)
-            HomeTab(stringResource(R.string.tab_loan), stringResource(R.string.nav_schedule), onSchedule)
-            HomeTab(stringResource(R.string.tab_support), stringResource(R.string.nav_support), onSupport)
-        }
+private fun PaidOffCard(copy: PaidOffCopy, onHistory: () -> Unit) {
+    val message = when (copy) {
+        PaidOffCopy.PaidOff -> R.string.home_paid_off
+        PaidOffCopy.StillRestricted -> R.string.home_restrictions_on
+        PaidOffCopy.FinishingUnlock -> R.string.home_finishing_unlock
+        PaidOffCopy.FullyYours -> R.string.home_fully_yours
     }
-}
-
-@Composable
-private fun HomeTab(label: String, description: String, onClick: () -> Unit) {
-    TextButton(onClick = onClick, modifier = Modifier.semantics { contentDescription = description }) {
-        Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onBackground)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(Mist)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Box(
+                modifier = Modifier.size(28.dp).clip(CircleShape).background(Cyan),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(Icons.Filled.Check, contentDescription = null, tint = White, modifier = Modifier.size(16.dp))
+            }
+            Text(stringResource(message), style = MaterialTheme.typography.titleMedium)
+        }
+        SecondaryButton(stringResource(R.string.home_see_history), onHistory)
     }
 }

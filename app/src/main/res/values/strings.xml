@@ -5,7 +5,7 @@
     <string name="retry">Try again</string>
     <string name="continue_action">Continue</string>
 
-    <string name="status_up_to_date">Up to date</string>
+    <string name="status_up_to_date">On track</string>
     <string name="status_due_soon">Due soon</string>
     <string name="status_overdue">Overdue</string>
     <string name="status_paid_off">Paid off</string>
@@ -32,6 +32,11 @@
     <string name="setup_scan_permission">Pay2Own needs the camera to read the shop code.</string>
     <string name="setup_scan_allow">Allow the camera</string>
     <string name="setup_scan_close">Type it instead</string>
+    <string name="setup_scan_looking">Looking for the code...</string>
+    <string name="setup_step">STEP %1$d OF %2$d</string>
+    <string name="setup_or">or type them</string>
+    <string name="setup_imei_hint">15 digits</string>
+    <string name="setup_token_hint">From the shop</string>
     <string name="setup_imei">IMEI</string>
     <string name="setup_token">Device token</string>
     <string name="setup_show_token">Show token</string>
@@ -55,6 +60,7 @@
     <string name="home_hello">Hello, %1$s</string>
     <string name="home_next_amount">Next payment</string>
     <string name="home_due">Due %1$s</string>
+    <string name="home_due_label">Due</string>
     <string name="home_installment">Installment %1$d of %2$d</string>
     <string name="home_remaining">Remaining balance</string>
     <string name="home_progress">Paid %1$s of %2$s</string>
@@ -65,11 +71,15 @@
     <string name="home_restrictions_on">This phone is paid off. Pay2Own restrictions are still on.</string>
     <string name="home_yours">This phone is fully yours.</string>
     <string name="home_locks_removed">The locks have been removed.</string>
+    <string name="lock_apps_paused">Other apps are paused until this phone is up to date.</string>
+    <string name="lock_phone">Phone</string>
     <string name="home_waiting">A payment is waiting for your approval.</string>
+    <string name="home_see_history">See payment history</string>
     <string name="pay_now">Pay now</string>
     <string name="nav_history">Payment history</string>
     <string name="nav_schedule">Loan details</string>
     <string name="nav_support">Support</string>
+    <string name="tab_home">Home</string>
     <string name="tab_payments">Payments</string>
     <string name="tab_loan">Loan</string>
     <string name="tab_support">Support</string>
@@ -100,13 +110,16 @@
     <string name="provider_atl">AT Money</string>
     <string name="provider_other">MoMo</string>
 
-    <string name="history_title">Payment history</string>
+    <string name="history_title">Payments</string>
     <string name="history_empty_title">No payments yet</string>
     <string name="history_empty_body">Payments you make will show here with the date, amount, reference and status.</string>
     <string name="payment_success">Received</string>
     <string name="payment_failed">Failed</string>
     <string name="payment_pending">Waiting</string>
     <string name="history_installments">Installments %1$s</string>
+    <string name="history_installment_line">Installment %1$d · %2$s</string>
+    <string name="history_deposit_line">Deposit · %1$s</string>
+    <string name="history_copy">Copy reference</string>
 
     <string name="receipt_title">Receipt</string>
     <string name="receipt_share">Share receipt</string>
@@ -125,6 +138,10 @@
     <string name="schedule_due_today">Due today</string>
     <string name="schedule_overdue">Overdue</string>
     <string name="schedule_unpaid">Due</string>
+    <string name="schedule_due_next">Due next</string>
+    <string name="schedule_upcoming">Upcoming</string>
+    <string name="schedule_weekly">Weekly</string>
+    <string name="terms_link">Pay2own payment terms</string>
     <string name="schedule_row">Installment %1$d, %2$s, %3$s, %4$s</string>
     <string name="terms_heading">Terms you agreed to</string>
 
@@ -136,8 +153,6 @@
     <string name="support_phone" translatable="false"></string>
     <string name="support_whatsapp" translatable="false"></string>
     <string name="faq">Common questions</string>
-    <string name="not_my_phone">This is not my phone</string>
-
     <string name="faq_title">Common questions</string>
     <string name="faq_pay_q">How do I pay?</string>
     <string name="faq_pay_a">Open Pay2Own, tap Pay now, and choose the installment that is due, several installments, or the full balance. Check the amount and your MoMo number, then approve the prompt on your phone with your MoMo PIN.</string>

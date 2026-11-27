@@ -88,9 +88,9 @@ fun AppRoot(enroll: EnrollLink?, onEnrollConsumed: () -> Unit) {
         composable(Routes.Home) {
             HomeRoute(
                 onPay = { nav.navigate(Routes.Pay) },
-                onHistory = { nav.navigate(Routes.History) },
-                onSchedule = { nav.navigate(Routes.Schedule) },
-                onSupport = { nav.navigate(Routes.Support) },
+                onHistory = { nav.openTab(Routes.History) },
+                onSchedule = { nav.openTab(Routes.Schedule) },
+                onSupport = { nav.openTab(Routes.Support) },
                 onSignedOut = { nav.openContact() },
             )
         }
@@ -103,7 +103,9 @@ fun AppRoot(enroll: EnrollLink?, onEnrollConsumed: () -> Unit) {
         }
         composable(Routes.History) {
             HistoryRoute(
-                onBack = { nav.popBackStack() },
+                onHome = { nav.openTab(Routes.Home) },
+                onLoan = { nav.openTab(Routes.Schedule) },
+                onSupport = { nav.openTab(Routes.Support) },
                 onReceipt = { reference -> nav.navigate(Routes.receipt(reference)) },
                 onSignedOut = { nav.openContact() },
             )
@@ -119,18 +121,36 @@ fun AppRoot(enroll: EnrollLink?, onEnrollConsumed: () -> Unit) {
             )
         }
         composable(Routes.Schedule) {
-            ScheduleRoute(onBack = { nav.popBackStack() }, onSignedOut = { nav.openContact() })
+            ScheduleRoute(
+                onHome = { nav.openTab(Routes.Home) },
+                onPayments = { nav.openTab(Routes.History) },
+                onSupport = { nav.openTab(Routes.Support) },
+                onSignedOut = { nav.openContact() },
+            )
         }
         composable(Routes.Support) {
             SupportRoute(
-                onBack = { nav.popBackStack() },
+                onHome = { nav.openTab(Routes.Home) },
+                onPayments = { nav.openTab(Routes.History) },
+                onLoan = { nav.openTab(Routes.Schedule) },
                 onFaq = { nav.navigate(Routes.Faq) },
-                onCleared = { nav.openSetup() },
             )
         }
         composable(Routes.Faq) {
             FaqRoute(onBack = { nav.popBackStack() })
         }
+    }
+}
+
+private fun NavHostController.openTab(route: String) {
+    if (route == Routes.Home) {
+        popBackStack(Routes.Home, inclusive = false)
+        return
+    }
+    navigate(route) {
+        popUpTo(Routes.Home) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
     }
 }
 
