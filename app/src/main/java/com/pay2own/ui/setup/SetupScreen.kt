@@ -24,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -164,7 +163,6 @@ private fun EnrollmentForm(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
-                    colors = fieldColors(),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
@@ -190,7 +188,6 @@ private fun EnrollmentForm(
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
-                    colors = fieldColors(),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 if (state.error != null) {
@@ -285,13 +282,3 @@ private fun OrDivider() {
     }
 }
 
-@Composable
-private fun fieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = Navy,
-    unfocusedBorderColor = Navy.copy(alpha = 0.35f),
-    focusedLabelColor = NavyMuted,
-    unfocusedLabelColor = NavyMuted,
-    cursorColor = Navy,
-    focusedTextColor = Navy,
-    unfocusedTextColor = Navy,
-)
