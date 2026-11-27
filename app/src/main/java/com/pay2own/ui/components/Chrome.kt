@@ -24,6 +24,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -48,7 +49,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.pay2own.R
 import com.pay2own.domain.PaidOffCopy
+import com.pay2own.ui.theme.Cyan
 import com.pay2own.ui.theme.Navy
+import com.pay2own.ui.theme.White
 import com.pay2own.ui.theme.Yellow
 import com.pay2own.ui.ScreenError
 
@@ -57,13 +60,14 @@ import com.pay2own.ui.ScreenError
 fun Pay2OwnScaffold(
     title: String,
     onBack: (() -> Unit)? = null,
+    showTopBar: Boolean = true,
     bottomBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
+            if (showTopBar) TopAppBar(
                 title = { Text(title, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     if (onBack != null) {
@@ -180,13 +184,21 @@ fun PrimaryButton(label: String, onClick: () -> Unit, enabled: Boolean = true, t
 
 @Composable
 fun SecondaryButton(label: String, onClick: () -> Unit) {
+    SecondaryButton(label, icon = null, onClick = onClick)
+}
+
+@Composable
+fun SecondaryButton(label: String, icon: ImageVector?, onClick: () -> Unit) {
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(28.dp),
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onBackground),
-        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+        modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
     ) {
+        if (icon != null) {
+            Icon(icon, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+        }
         Text(label, style = MaterialTheme.typography.titleMedium)
     }
 }
@@ -219,8 +231,8 @@ fun PaidOffMessage(copy: PaidOffCopy = PaidOffCopy.PaidOff) {
 }
 
 @Composable
-fun StatusBadge(status: String, modifier: Modifier = Modifier) {
-    val (container, content) = statusColors(status)
+fun StatusBadge(status: String, modifier: Modifier = Modifier, onDark: Boolean = false) {
+    val (container, content) = if (onDark) onDarkStatusColors(status) else statusColors(status)
     val label = statusLabel(status)
     Text(
         text = label,
@@ -239,6 +251,12 @@ fun statusLabel(status: String): String = when (status) {
     "overdue" -> stringResource(R.string.status_overdue)
     "paid_off" -> stringResource(R.string.status_paid_off)
     else -> stringResource(R.string.status_up_to_date)
+}
+
+@Composable
+private fun onDarkStatusColors(status: String): Pair<Color, Color> = when (status) {
+    "paid_off", "due_soon", "overdue" -> Yellow to Navy
+    else -> Cyan to White
 }
 
 @Composable

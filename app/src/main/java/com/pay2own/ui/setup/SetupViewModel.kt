@@ -88,6 +88,10 @@ class SetupViewModel @Inject constructor(
         }
     }
 
+    fun backToForm() {
+        _state.update { it.copy(confirm = null, checking = false, error = null) }
+    }
+
     fun reject() {
         viewModelScope.launch {
             repository.clearEnrollment()

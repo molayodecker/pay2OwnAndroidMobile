@@ -5,6 +5,7 @@
 -keep class com.pay2own.Pay2OwnDeviceAdminReceiver { *; }
 -keep class com.pay2own.GetProvisioningModeActivity { *; }
 -keep class com.pay2own.AdminPolicyComplianceActivity { *; }
+-keep class com.pay2own.restrictions.LockHomeActivity { *; }
 
 -if @kotlinx.serialization.Serializable class **
 -keepclassmembers class <1> {

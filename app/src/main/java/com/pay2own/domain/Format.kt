@@ -33,6 +33,42 @@ private val months = listOf(
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 )
 
+fun firstName(name: String): String = name.trim().substringBefore(' ').ifBlank { name.trim() }
+
+fun initials(name: String): String {
+    val parts = name.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+    if (parts.isEmpty()) return ""
+    if (parts.size == 1) return parts[0].take(2).uppercase(Locale.ROOT)
+    return (parts.first().take(1) + parts.last().take(1)).uppercase(Locale.ROOT)
+}
+
+fun spacedPhone(value: String): String {
+    val shown = displayPhone(value)
+    val match = Regex("(\\d{3})(•+)(\\d{4})").matchEntire(shown) ?: return shown
+    return "${match.groupValues[1]} ${match.groupValues[2]} ${match.groupValues[3]}"
+}
+
+fun shortReference(reference: String): String {
+    if (reference.length <= 18) return reference
+    return reference.take(10) + "…" + reference.takeLast(6)
+}
+
+fun formatWeekday(iso: String): String {
+    val parts = iso.take(10).split("-")
+    if (parts.size != 3) return formatIsoDate(iso)
+    val year = parts[0].toIntOrNull() ?: return formatIsoDate(iso)
+    val month = parts[1].toIntOrNull() ?: return formatIsoDate(iso)
+    val day = parts[2].toIntOrNull() ?: return formatIsoDate(iso)
+    if (month !in 1..12) return formatIsoDate(iso)
+    val calendar = Calendar.getInstance(Locale.US)
+    calendar.set(Calendar.YEAR, year)
+    calendar.set(Calendar.MONTH, month - 1)
+    calendar.set(Calendar.DAY_OF_MONTH, day)
+    val weekday = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US)
+        ?: return formatIsoDate(iso)
+    return "$weekday $day ${months[month - 1]} $year"
+}
+
 fun formatIsoDate(iso: String): String {
     val date = iso.take(10)
     val parts = date.split("-")

@@ -32,6 +32,7 @@ fun ContactRoute(
             )
             Text(stringResource(R.string.contact_body), style = MaterialTheme.typography.bodyLarge)
             SupportActions()
+            Text(stringResource(R.string.support_not_configured), style = MaterialTheme.typography.bodyLarge)
             SecondaryButton(stringResource(R.string.contact_new_token), viewModel::enterNewToken)
         }
     }
